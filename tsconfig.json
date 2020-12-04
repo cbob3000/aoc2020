@@ -1,18 +1,43 @@
 {
+"compileOnSave": false,
 "compilerOptions": {
- "target": "es5",
- "lib": [
-   "es2017","es2015","dom","es6"
-  ],
- "module": "commonjs",
- "outDir": "./",
- "sourceMap": false,
- "strict": true
+    "rootDir": "src",
+    "sourceMap": true,
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "lib": ["es2015", "dom"],
+    "baseUrl": "./",
+    "typeRoots": [
+        "node_modules/@types"
+    ],
+    "types": [
+        "jquery",
+        "jqueryui",
+        "node"
+    ],
+    "paths": {
+        "src/*": ["src/*"]
+    }
 },
-"include": [
-  "**.ts"
- ],
 "exclude": [
-  "node_modules",
- ]
+    "node_modules",
+    "dist",
+    "build"
+],
+"filesGlob": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./typings/index.d.ts",
+    "./custom_typings/**/*.d.ts",
+    "./node_modules/@types/**/*.d.ts"
+],
+"atom": {
+    "rewriteTsconfig": false
+}
 }

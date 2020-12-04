@@ -10,6 +10,10 @@ input.forEach((value: number) => {
     }
 })
 
+var result: number = -1;
 output.forEach((entry) => {
-    console.log(entry);
+    if (result == -1) result = entry;
+    else result *= entry;
 })
+
+console.log(result);
