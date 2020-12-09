@@ -1,69 +1,63 @@
 import fs = require("fs");
 
-const file = fs.readFileSync('input/day8_test.txt', 'utf-8');
+const file = fs.readFileSync('input/day8.txt', 'utf-8');
 const input = file.split("\n");
 
 const executed: Set<number> = new Set();
 const flipped: Set<number> = new Set();
-const paths: string[] = [];
 
-var path: string = "";
 var acc = 0;
-var count = 0;
 var run = true;
+var program: string[] = [];
+
+function reHash() {
+  var patched  = Object.assign([], input);
+  for (var i = 0; i < patched.length; i++) {
+    const [instruction, value] = patched[i].split(" ");
+    if (instruction === "jmp" && !flipped.has(i)) {
+      flipped.add(i);
+      patched[i] = "nop " + value;
+      break;
+    }
+    if (instruction === "nop" && !flipped.has(i)) {
+      flipped.add(i);
+      patched[i] = "jmp " + value;
+      break;
+    }
+  }
+  return patched;
+}
+
+program = input;
 
 while (run) {
-    paths.push(path);
-    path += count;
-    if (executed.has(count)) {
-        // no end found, reset
-        path = "0";
-        executed.clear();
-        count = 0;
-        acc = 0;
-        console.log(paths);
-        console.log("reset")
-    }
-    if (count === input.length - 1) {
+  acc = 0;
+  executed.clear();
+  for (var count = 0; count < program.length; ) {
+
+      if (executed.has(count)) {
+          acc = 0;
+          executed.clear();
+          program = reHash();
+          break;
+      }
+      if (count === program.length - 1) {
         run = false;
-        console.log(acc);
-        break
-    }
+        break;
+      }
+      executed.add(count);
 
-    var jmp = 1;
+      var jmp = 1;
+      const [instruction, value] = program[count].split(" ");
 
-    const [instruction, value] = input[count].split(" ");
-    if (instruction === "acc") {
-        acc += +value;
-    }
-    else if (instruction === "jmp") {
-        var futureCount = count + (+value);
-        var futurePath = path + futureCount;
+      if (instruction === "acc") {
+          acc += +value;
+      }
+      else if (instruction === "jmp") {
+          jmp = +value;
+      }
+      count += jmp;
+  };
+}
 
-        console.log(futurePath);
-
-        if ((paths.includes(futurePath))) {
-            // make it a nop
-            flipped.add(count);
-            console.log("flippin jmp to nop at " + count);
-        }
-        else {
-             jmp = +value;
-         }
-    }
-    else {
-        var futureCount = count + 1;
-        var futurePath = path + futureCount;
-
-        console.log(futurePath);
-
-        if ((paths.includes(futurePath))) {
-            flipped.add(count);
-            // make it a jmp
-            jmp = +value;
-        }
-
-    }
-    executed.add(count);
-    count += jmp;
-};
+console.log(acc);
