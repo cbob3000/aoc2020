@@ -5,23 +5,23 @@ const input = file.split("\n");
 
 const executed: Set<number> = new Set();
 const flipped: Set<number> = new Set();
-const path: string = "";
-const paths: [];
+const paths: string[] = [];
 
+var path: string = "";
 var acc = 0;
 var count = 0;
 var run = true;
 
 while (run) {
+    paths.push(path);
     path += count;
-    console.log(count);
     if (executed.has(count)) {
         // no end found, reset
-        paths.push(path);
-        path = "";
+        path = "0";
         executed.clear();
         count = 0;
         acc = 0;
+        console.log(paths);
         console.log("reset")
     }
     if (count === input.length - 1) {
@@ -31,22 +31,33 @@ while (run) {
     }
 
     var jmp = 1;
-    
+
     const [instruction, value] = input[count].split(" ");
     if (instruction === "acc") {
         acc += +value;
     }
     else if (instruction === "jmp") {
-        if ((!flipped.has(count)) && executed.has(count)) {
+        var futureCount = count + (+value);
+        var futurePath = path + futureCount;
+
+        console.log(futurePath);
+
+        if ((paths.includes(futurePath))) {
             // make it a nop
             flipped.add(count);
+            console.log("flippin jmp to nop at " + count);
         }
         else {
              jmp = +value;
          }
     }
     else {
-        if ((!flipped.has(count)) && executed.has(count)) {
+        var futureCount = count + 1;
+        var futurePath = path + futureCount;
+
+        console.log(futurePath);
+
+        if ((paths.includes(futurePath))) {
             flipped.add(count);
             // make it a jmp
             jmp = +value;
