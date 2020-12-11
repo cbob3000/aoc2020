@@ -4,43 +4,44 @@ const file = fs.readFileSync('input/day10_test.txt', 'utf-8');
 var input = file.split("\r\n");
 
 var oneDiffs: number[] = [];
-var twoDiffs: number[] = [];
-var threeDiffs: number[] = [];
+
+const solutions = [];
+const data: number[] = [];
+
+const priorities = [    1, 2, 3,
+                        3, 2, 1,
+                        2, 1, 3,
+                        3, 1, 2     ];
+var arrangements = 0;
+
+var used: Set<number> = new Set();
 
 input.sort((a, b) => { return (+a) - (+b); });
 input = input.slice(1);
 input.unshift("0");
 
-const data: number[] = [];
 input.forEach(value => {
   data.push((+value));
 });
 
-data.forEach((value: number) => {
-
-    // prefer diff of 1
-    var output = data.filter((n) => { return n === value + 1; });
-    if (output.length > 0) {
-      console.log(output);
-      //console.log("ke" + output[1]);
-      oneDiffs.push((+output[1]));
+for (var prio = 0; prio < priorities.length / 3; prio += 3) {
+    var prioIndex = prio * 3;
+    for (var i = 0; i < data.length; i++) {
+        data.forEach((value: number) => {
+                for (var p = 0; p < 3; p++) {
+                    var output = data.filter((n) => { return n === value + priorities[prioIndex + p]; });
+                    if (output.length > 0 && !used.has(output[0])) {
+                        used.add(output[0]);
+                        oneDiffs.push(output[0]);
+                        break;
+                    }
+                }
+            }
+        );
+        solutions.push(oneDiffs);
+        oneDiffs = [];
+        used.clear();
     }
-    else {
-      // second priority: diff of 2
-      output = data.filter((n) => { return n == value + 2; });
-      if (output.length > 0) {
-          console.log("pe" + output[1]);
-          oneDiffs.push((+output[1]));
-      }
-      else {
-        // second priority: diff of 3
-        output = data.filter((n) => { return n == value + 3; });
-        if (output.length > 0) {
-          console.log("la" + output[1]);
-            oneDiffs.push((+output[1]));
-        }
-      }
-    }
-});
+}
 
-//console.log(oneDiffs);
+console.log(solutions.length);
